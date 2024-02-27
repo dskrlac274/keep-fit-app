@@ -1,0 +1,30 @@
+@startuml KeepFitApplicationUseCase
+
+left to right direction
+skinparam class {
+    BackgroundColor PaleGreen
+    ArrowColor Black
+    BorderColor SpringGreen
+}
+
+actor Korisnik as U
+
+rectangle KeepFitAplikacija {
+    (Pregledavanje profila) as (MP) #80b3ff
+    (Vođenje evidencije o hrani) as (LF) #80b3ff
+    (Vođenje evidencije o aktivnostima) as (LE) #80b3ff
+    (Vođenje bilješki) as (TN) #80b3ff
+    (Postavljanje ciljeva) as (SG) #80b3ff
+    (Pregledavanje denevno ostvarenih ciljeva) as (RFL) #80b3ff
+    (Pregledavanje zdravstvenih indikatora) as (THI) #80b3ff
+    
+    U --> MP
+    U --> LF
+    U --> LE
+    U --> SG
+    U --> THI
+    U --> RFL
+    U --> TN
+}
+
+@enduml

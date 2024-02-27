@@ -1,0 +1,93 @@
+@startuml
+
+skinparam class {
+    BackgroundColor #80b3ff
+    BorderColor #00001a
+    ArrowColor #001233
+}
+
+entity "o_user" as user {
+  *id : SERIAL <<PK>>
+  --
+  *email : VARCHAR(200)
+  *name : VARCHAR(200)
+  *created_at : TIMESTAMP
+  image : TEXT
+}
+
+entity "goal" as goal {
+  *id : SERIAL <<PK>>
+  --
+  *user_id : INT <<FK>>
+  *type : TEXT
+  *goal : JSONB
+}
+
+entity "health_indicator_history" as health {
+  *id : SERIAL <<PK>>
+  --
+  *user_id : INT <<FK>>
+  created_at : DATE
+  *indicators : JSONB
+}
+
+entity "food" as food {
+  *id : SERIAL <<PK>>
+  --
+  *user_id : INT <<FK>>
+  *name : VARCHAR(200)
+  *calories : DECIMAL
+  *nutrients : JSONB
+  *type : TEXT
+}
+
+entity "food_log" as food_log {
+  *id : SERIAL <<PK>>
+  --
+  *user_id : INT <<FK>>
+  *food_id : INT <<FK>>
+  *created_at : DATE
+  *quantity : INT
+}
+
+entity "exercise" as exercise {
+  *id : SERIAL <<PK>>
+  --
+  *user_id : INT <<FK>>
+  *type : TEXT
+  *name : VARCHAR(200)
+  *duration : INT
+  *calories_burned : DECIMAL
+  *details : JSONB
+}
+
+entity "exercise_log" as exercise_log {
+  *id : SERIAL <<PK>>
+  --
+  *user_id : INT <<FK>>
+  *exercise_id : INT <<FK>>
+  *created_at : DATE
+  *quantity : INT
+}
+
+entity "note" as note {
+  *id : SERIAL <<PK>>
+  --
+  *user_id : INT <<FK>>
+  created_at : DATE
+  *type : TEXT
+  *description : TEXT
+}
+
+user ||--o{ goal
+user ||--o{ health
+user ||--o{ food
+user ||--o{ exercise
+user ||--o{ note
+user ||--o{ food_log
+user ||--o{ exercise_log
+
+food ||--o{ food_log
+exercise ||--o{ exercise_log
+
+@enduml

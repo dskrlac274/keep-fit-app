@@ -1,0 +1,63 @@
+@startuml
+
+skinparam class {
+    BackgroundColor PaleGreen
+    ArrowColor Black
+    BorderColor SpringGreen
+}
+
+actor Korisnik
+
+participant "Kontroler autentifikacije\n(AuthController)" as AuthController #80b3ff
+participant "Google servis autentifikacije\n(GoogleAuthService)" as GoogleAuthService #80b3ff
+participant "Servis autentifikacije\n(AuthService)" as AuthService #80b3ff
+participant "Repozitorij korisnika\n(UserRepository)" as UserRepository #80b3ff
+participant "JWT pomagač\n(JwtHelper)" as JwtHelper #80b3ff
+participant "Baza podataka" as Database #80b3ff
+
+Korisnik -> AuthController: login(req, res)
+activate AuthController
+
+AuthController -> GoogleAuthService: authenticate(token)
+activate GoogleAuthService
+
+GoogleAuthService -> GoogleAuthService: Provjera tokena
+GoogleAuthService -> AuthController: authResponse
+deactivate GoogleAuthService
+
+alt authResponse uspješan
+    AuthController -> AuthService: login(authResponse.data)
+    activate AuthService
+
+    AuthService -> UserRepository: getByEmail(userEmail)
+    activate UserRepository
+
+    alt Korisnik ne postoji
+        UserRepository -> Database: SQL upit za dohvat korisnika
+        activate Database
+        Database -> UserRepository: Nema rezultata
+        UserRepository -> Database: SQL upit za stvaranje korisnika
+        Database -> UserRepository: Korisnik stvoren
+        deactivate Database
+    else Korisnik postoji
+        UserRepository -> Database: SQL upit za dohvat korisnika
+        activate Database
+        Database -> UserRepository: Korisnik
+        deactivate Database
+    end
+
+    deactivate UserRepository
+
+    AuthService -> JwtHelper: createJwt(user.id)
+    activate JwtHelper
+    JwtHelper -> AuthService: jwtToken
+    deactivate JwtHelper
+
+    AuthService -> AuthController: odgovor
+    deactivate AuthService
+end
+
+AuthController -> Korisnik: odgovor (Uspješna prijava)
+deactivate AuthController
+
+@enduml
